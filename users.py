@@ -4,15 +4,19 @@ import sqlite3
 from ansicolors import colors
 #######################
 #SQLITE3 DATABASE
-#create the sqlite3 database
+
+#connect the sqlite3 database
 db_conn = sqlite3.connect("test.db")
 print("database Connected")
+#used to execute commands
 theCursor = db_conn.cursor()
-print(theCursor.arraysize)
 
-def print_user_from_Db(userShape):
+def get_time():
+    return time.strftime("%m/%d/%Y", time.gmtime())
+
+def print_user_from_Db(employeeShape):
     try:
-        result = theCursor.execute("SELECT Id, FName, LName, Age, Address, Salary, HireDate from Employees WHERE FName = '{}' and Salary = '{}'".format(userShape["firstName"], userShape["salary"]))
+        result = theCursor.execute("SELECT Id, FName, LName, Age, Address, Salary, HireDate from Employees WHERE FName = '{}' and Salary = '{}'".format(employeeShape["firstName"], employeeShape["salary"]))
         for row in result:
             print(colors.reset,"ID :", row[0])
             print("FName :", row[1])
@@ -24,6 +28,7 @@ def print_user_from_Db(userShape):
             print("####################################")
     except Exception as e:
         print(e)
+
 
 def print_DB():
     try:
@@ -46,7 +51,7 @@ def print_DB():
 def create_db():
     try:
         #every run will wipe database
-        db_conn.execute("DROP TABLE IF EXISTS Employees")
+        # db_conn.execute("DROP TABLE IF EXISTS Employees")
 
         #table create function
         db_conn.execute("Create Table Employees(Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, FName TEXT NOT NULL, LNAME TEXT NOT NULL, Age INT NOT NULL, Address TEXT, Salary REAL, HireDate TEXT);")
@@ -56,37 +61,35 @@ def create_db():
     except sqlite3.OperationalError:
         print("table not created")
 
-create_db()
 
-def get_time():
-    return time.strftime("%m/%d/%Y", time.gmtime())
+create_db()
 
 print('Create a database entry? y / n')
 newUser = input()
 
 if newUser == 'y':
     userData={
-    "firstName":'',
-    "lastName": '',
-    "age": 0,
-    "address": " ",
-    "salary": 0,
-    "hireDate": '',
-    "confirmationMsg": ''
+        "firstName":'',
+        "lastName": '',
+        "age": 0,
+        "address": " ",
+        "salary": 0,
+        "hireDate": '',
+        "confirmationMsg": ''
     }
-    print('Your first name')
+    print('Enter your first name')
     userData["firstName"] = input()
 
-    print('Your last name')
+    print('Enter your last name')
     userData["lastName"] = input()
 
-    print('Your age')
+    print('Enter your age')
     userData["age"] = input()
 
-    print('Your address')
+    print('Enter your address')
     userData["address"] = input()
 
-    print('Your salary')
+    print('Enter your salary')
     userData["salary"] = input()
     userData["hireDate"] = get_time()
     
@@ -121,23 +124,23 @@ if newUser == 'y':
 db_conn.execute("INSERT INTO Employees (FName, LName, Age, Address, Salary, HireDate)" "VALUES ('Dominique', 'Sakrisson', 27, '123 main st', '500,000,000', date('now'))")
 db_conn.commit()
 print_DB()
-getUser= 'n'
+getEmployee= 'n'
 print("would you like to view a user? (y / n)")
-getUser = input()
-while getUser == 'y':
-    userShape= {
+getEmployee = input()
+while getEmployee == 'y':
+    employeeShape= {
         "firstName": "",
         "salary": "",
     }
     print(colors.fgCyan,"user first name")
-    userShape["firstName"] = input()
+    employeeShape["firstName"] = input()
     print("user salary")
-    userShape["salary"] = input()
+    employeeShape["salary"] = input()
     
-    print_user_from_Db(userShape)
+    print_user_from_Db(employeeShape)
 
     print("would you like to view another user? (y / n)")
-    getUser = input()
+    getEmployee = input()
 
       
 # execute printDb to return all results from database employees
